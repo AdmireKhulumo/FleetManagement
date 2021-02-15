@@ -13,7 +13,7 @@ public class GUIIndexPage {
 
     public void create() {
         //create frame and set dimensions
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900,700);
         
         //main and only panel
@@ -69,6 +69,28 @@ public class GUIIndexPage {
         gbc.gridheight=1;
         //add item to the panel
         panel.add(btnSearch, gbc);
+
+        //Refresh button
+        //Back Button -- text shows page on top of stack, i.e previous page
+        JLabel lblRefresh = new JLabel("Refresh");
+        lblRefresh.setFont(labelFont);
+        lblRefresh.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblRefresh.setForeground(Color.BLUE);
+        lblRefresh.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                refresh();
+            }
+        });
+        //set coordinates
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.CENTER;
+        gbc.gridx=3;
+        gbc.gridy=0;
+        gbc.gridwidth = 1;
+        gbc.gridheight=1;
+        panel.add(lblRefresh, gbc);
         
         //sign out button
         JButton btnSignOut = new JButton("Logout");
@@ -78,6 +100,8 @@ public class GUIIndexPage {
             public void actionPerformed(ActionEvent e) {
                 //delete index page by calling setting frame to invisible
                 frame.setVisible(false);
+                //remove index page from stack
+                Navigation.back();
             }
         });
         //set coordinates
@@ -169,6 +193,9 @@ public class GUIIndexPage {
         btnAddCar.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
+                //call function to update stack
+                updateStack();
+
                 //open Add Car GUI
                 GUIAddCar ac = new GUIAddCar();
                 ac.create();
@@ -247,6 +274,9 @@ public class GUIIndexPage {
         //Show Reservations  button
         JButton btnShowReservations = new JButton("Show Reservations");
         btnShowReservations.addActionListener(e -> {
+            //call function to update stack
+            updateStack();
+
             //open the reservations UI
             GUIReservations r = new GUIReservations();
             r.create();
@@ -259,6 +289,28 @@ public class GUIIndexPage {
         gbc.gridheight=1;
         //add item to the panel
         panel.add(btnShowReservations, gbc);
+
+        //Back Button -- text shows page on top of stack, i.e previous page
+        JLabel lblBack = new JLabel("<-- Back To " + Navigation.top().toUpperCase() + " Page");
+        lblBack.setFont(labelFont);
+        lblBack.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblBack.setForeground(Color.BLUE);
+        lblBack.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                    goBack();
+            }
+        });
+        //set coordinates
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.CENTER;
+        gbc.gridx=0;
+        gbc.gridy=3;
+        gbc.gridwidth = 5;
+        gbc.gridheight=1;
+        gbc.insets = new Insets(20,0,0,0);
+        panel.add(lblBack, gbc);
 
         frame.add(panel);
         frame.setVisible(true);
@@ -295,5 +347,27 @@ public class GUIIndexPage {
         //display the car
         GUIDisplayCar dc = new GUIDisplayCar();
         dc.create(car);
+    }
+
+    //method to update navigation stack before moving forward
+    private void updateStack(){
+        //close current view
+        this.frame.setVisible(false);
+        //add index to navigation stack
+        Navigation.forward("index");
+    }
+
+    //method to go to previous page
+    private void goBack(){
+        //go to previous page
+        Navigation.back();
+
+        //close this current
+        this.frame.setVisible(false);
+    }
+
+    private void refresh(){
+        this.frame.setVisible(false);
+        new GUIIndexPage().create();
     }
 }

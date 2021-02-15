@@ -1,19 +1,20 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class GUIAddCar {
+
+    //create a java frame(window) to hold the layout view
+    JFrame frame = new JFrame();
 
     //instance variables to store input data
     String model ="";
@@ -125,13 +126,10 @@ public class GUIAddCar {
             }
         });
 
-        //create a java frame(window) to hold the layout view
-        JFrame frame = new JFrame();
-
         //set frame dimensions, and make sure it exists when closed.
         frame.setSize(450, 500);
         frame.setTitle("Add Car To Fleet");
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //add panel to frame
         ImagePanel panel = new ImagePanel(new ImageIcon("./src/main/resources/images/bkg.jpg").getImage());
@@ -271,6 +269,28 @@ public class GUIAddCar {
         lblResult.setFont(new Font("Courier New",Font.BOLD, 20));
         panel.add(lblResult,gbc);
 
+        //Back Button -- text shows page on top of stack, i.e previous page
+        JLabel lblBack = new JLabel("<-- Back To " + Navigation.top().toUpperCase() + " Page");
+        lblBack.setFont(labelFont);
+        lblBack.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblBack.setForeground(Color.BLUE);
+        lblBack.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                goBack();
+            }
+        });
+        //set coordinates
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.CENTER;
+        gbc.gridx=0;
+        gbc.gridy=8;
+        gbc.gridwidth = 2;
+        gbc.gridheight=1;
+        gbc.insets = new Insets(20,0,0,0);
+        panel.add(lblBack, gbc);
+
         //make frame visible
         frame.setVisible(true);
     }
@@ -298,10 +318,16 @@ public class GUIAddCar {
 
             //update database
             DB db = new DB();
-            db.addCar(car);
 
-            //update success label to successful
-            lblResult.setText("Successful!");
+            if ( db.addCar(car) ){
+                //update success label to successful
+                lblResult.setText("Successful!");
+            }
+            else {
+                //update success label to faied
+                lblResult.setText("Failed. Try Again!");
+            }
+
         }catch(Exception ex){
             //update label to failed
             lblResult.setText("Failed.");
@@ -316,4 +342,21 @@ public class GUIAddCar {
     //setters for make and model
     public void setMake(String make){this.make = make;}
     public void setModel(String model){this.model = model;}
+
+    //method to update navigation stack before moving forward
+    private void updateStack(){
+        //close current view
+        this.frame.setVisible(false);
+        //add index to navigation stack
+        Navigation.forward("index");
+    }
+
+    //method to go to previous page
+    private void goBack(){
+        //go to previous page
+        Navigation.back();
+
+        //close this current
+        this.frame.setVisible(false);
+    }
 }

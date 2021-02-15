@@ -8,15 +8,20 @@ public class GUIReservations {
 
     private ArrayList<Reservation> reservations;
     private JTable table;
+    JFrame frame = new JFrame("CAR RESERVATIONS");
 
     public void create(){
         //create frame and set dimensions
-        JFrame frame = new JFrame("CAR RESERVATIONS");
         frame.setSize(900,400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 
         //create panel and set layout to gridbag
         ImagePanel panel = new ImagePanel(new ImageIcon("./src/main/resources/images/bkg.jpg").getImage());
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        //label font
+        Font labelFont = new Font("Courier New",Font.BOLD, 16);
 
         //title
         JLabel lblTopic = new JLabel("Reservations");
@@ -90,6 +95,20 @@ public class GUIReservations {
             panel.add(lblNF);
         }
 
+        //Back Button -- text shows page on top of stack, i.e previous page
+        JLabel lblBack = new JLabel("<-- Back To " + Navigation.top().toUpperCase() + " Page");
+        lblBack.setFont(labelFont);
+        lblBack.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblBack.setForeground(Color.BLUE);
+        lblBack.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                goBack();
+            }
+        });
+        panel.add(lblBack);
+
         //add panel to frame, set it to visible
         frame.add(panel);
         frame.setVisible(true);
@@ -106,5 +125,20 @@ public class GUIReservations {
         //display the car
         GUIDisplayCar dc = new GUIDisplayCar();
         dc.create(car);
+    }
+
+    //method to update navigation stack before moving forward
+    private void updateStack(){
+        //add index to navigation stack
+        Navigation.forward("index");
+    }
+
+    //method to go to previous page
+    private void goBack(){
+        //go to previous page
+        Navigation.back();
+
+        //close this current
+        this.frame.setVisible(false);
     }
 }

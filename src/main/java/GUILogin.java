@@ -6,16 +6,13 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class GUILogin {
-    private  JLabel success, passwordLabel,userNameLabel;
-    private  JButton button;
     private  JPasswordField passwordLabelText;
     private  TextField userNameText;
-    private JLabel loginLabel;
-    
+
     //panel and frame
     //JPanel panel = new JPanel();
-   private ImagePanel panel = new ImagePanel(new ImageIcon("./src/main/resources/images/bkg.jpg").getImage());
-    private JFrame frame = new JFrame();
+   private final ImagePanel panel = new ImagePanel(new ImageIcon("./src/main/resources/images/bkg.jpg").getImage());
+    private final JFrame frame = new JFrame();
 
     public void create() {
 
@@ -30,13 +27,13 @@ public class GUILogin {
         Font labelFont = new Font("Courier New",Font.PLAIN, 16);
         //define font for titles
         Font titleFont = new Font("Courier New",Font.BOLD, 25);
-        
-        loginLabel = new JLabel ("LOGIN PAGE");
+
+        JLabel loginLabel = new JLabel("LOGIN PAGE");
         loginLabel.setBounds(120, 20, 170, 25);
         loginLabel.setFont(titleFont);
         panel.add(loginLabel);
 
-        userNameLabel = new JLabel("USERNAME");
+        JLabel userNameLabel = new JLabel("USERNAME");
         userNameLabel.setBounds(20, 70, 80, 25);
         userNameLabel.setFont(labelFont);
         panel.add(userNameLabel);
@@ -45,7 +42,7 @@ public class GUILogin {
         userNameText.setBounds(130, 70, 170, 30);
         panel.add(userNameText);
 
-        passwordLabel = new JLabel("PASSWORD");
+        JLabel passwordLabel = new JLabel("PASSWORD");
         passwordLabel.setBounds(20, 120, 80, 25);
         passwordLabel.setFont(labelFont);
         panel.add(passwordLabel);
@@ -54,7 +51,7 @@ public class GUILogin {
         passwordLabelText.setBounds(130, 120, 170, 30);
         panel.add(passwordLabelText);
 
-        button = new JButton("LOGIN");
+        JButton button = new JButton("LOGIN");
         button.setBounds(120, 165, 110, 40);
         button.setFont(labelFont);
         button.addActionListener(new ActionListener() {
@@ -65,7 +62,7 @@ public class GUILogin {
         });
         panel.add(button);
 
-        success = new JLabel("");
+        JLabel success = new JLabel("");
         success.setBounds(10, 110, 300, 25);
         panel.add(success);
 
@@ -83,11 +80,16 @@ public class GUILogin {
 
         //check if credentials match what's required -- call database method to authenticate user -- returns true if successful
         if ( new DB().authUser(user, password) ) {
-            //success.setText("Successfully Logged In!");
+            //before leaving, add login to stack
+            Navigation.forward("login");
+
             //call index page
             GUIIndexPage indexPage = new GUIIndexPage();
+            //startup index page
             indexPage.create();
 
+            //close login page
+            this.frame.setVisible(false);
         }
         else{
             //unsuccessful, create error message modal

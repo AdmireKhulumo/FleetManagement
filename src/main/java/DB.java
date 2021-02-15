@@ -135,7 +135,8 @@ public class DB {
     }
 
     //function to add a car to the cars database. Called by the GUIAddCar
-    public  void addCar(Car car){
+    public  boolean addCar(Car car){
+        boolean success = false;
 
         try{
             //Execute a query
@@ -156,14 +157,13 @@ public class DB {
             //close up
             ps.close();
             conn.close();
+            success=true;
 
         }catch(SQLException se){
             se.printStackTrace();
-        }catch (Exception ex){
-            ex.printStackTrace();
         }
 
-        System.out.println("Done done.");
+        return success;
     }
 
     //method called when a car is reserved -- changes: availability to NO, reservations table adding person id, regNo fname,sname,phone, address
